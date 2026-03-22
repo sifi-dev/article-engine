@@ -443,6 +443,18 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.8;
   color: var(--text-secondary);
   padding: 20px 0 40px;
+}
+
+/* Constrain prose to a readable line-length; only tables break out to use the full column */
+.article-body > p,
+.article-body > h1,
+.article-body > h2,
+.article-body > h3,
+.article-body > h4,
+.article-body > ul,
+.article-body > ol,
+.article-body > blockquote,
+.article-body > hr {
   max-width: 720px;
 }
 
@@ -511,6 +523,11 @@ a { color: inherit; text-decoration: none; }
 .code-block {
   position: relative;
   margin: 1.5em 0;
+  max-width: min(720px, 100%);
+}
+
+.code-block--wide {
+  max-width: 100%;
 }
 
 .code-lang {
@@ -611,6 +628,43 @@ a { color: inherit; text-decoration: none; }
 
 .article-body blockquote p {
   margin-bottom: 0;
+}
+
+/* ── Article tables ── */
+.table-overflow {
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.article-body th,
+.article-body td {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-body th {
+  background: var(--surface);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.article-body td {
+  color: var(--text-secondary);
+}
+
+.article-body tr:nth-child(even) td {
+  background: var(--surface);
 }
 
 .article-body hr {

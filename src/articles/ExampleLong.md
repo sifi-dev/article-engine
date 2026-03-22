@@ -76,12 +76,47 @@ export default function App(): JSX.Element {
 const params = useParams<{ slug: string }>();
 ```
 
+## Signals and Stores
+
+SolidJS signals are the primitive building block. For local UI state, `createSignal` is enough. When multiple pieces of state depend on each other, extract a store factory.
+
+```typescript
+import { createSignal, createMemo } from "solid-js";
+import type { Accessor, Setter } from "solid-js";
+import type { ArticleMetadata } from "../articles/index";
+
+type ArticleStoreReturn = {
+  articles: Accessor<ArticleMetadata[]>;
+  filtered: Accessor<ArticleMetadata[]>;
+  filter: Accessor<string>;
+  setFilter: Setter<string>;
+};
+
+export function createArticleStore(initialArticles: readonly ArticleMetadata[]): ArticleStoreReturn {
+  const [articles] = createSignal<ArticleMetadata[]>([...initialArticles]);
+  const [filter, setFilter] = createSignal<string>("");
+
+  const filtered = createMemo(() =>
+    articles().filter((a) => a.title.toLowerCase().includes(filter().toLowerCase()))
+  );
+
+  return { articles, filtered, filter, setFilter };
+}
+```
+
+The factory pattern keeps signal creation co-located with the derived memos that depend on them.
+
 ## TypeScript Configuration
 
-Two settings that matter most in `tsconfig.json`:
+Settings worth pinning from the start:
 
-- `"strict": true` — catches nullability issues early
-- `"moduleResolution": "bundler"` — lets Vite resolve imports the way it actually works
+| Option | Recommended | Why |
+| --- | --- | --- |
+| `strict` | `true` | Catches nullability and implicit `any` early |
+| `moduleResolution` | `"bundler"` | Matches Vite's resolution algorithm |
+| `target` | `"ESNext"` | No unnecessary downcompilation; Vite handles browser targets |
+| `isolatedModules` | `true` | Required for single-file transpilation in Vite |
+| `jsx` | `"preserve"` | Lets Vite and the SolidJS plugin handle the JSX transform |
 
 Run the compiler in check-only mode before committing:
 
